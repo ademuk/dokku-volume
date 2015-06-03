@@ -4,6 +4,7 @@ _path=".o_volume"
 version="1.0"
 
 APP=$2
+IMAGE="dokku/$APP"
 OLDHOME=$HOME
 HOME="$DOKKU_ROOT/$_path"
 
@@ -129,7 +130,28 @@ case "$1" in
     ;;
 
   volume:pre_build)
-    :
+    read -d '' runner <<'EOF'
+#!/bin/bash
+
+./herokuish "$@"
+
+APP_USER=$(stat -c %U /app)
+APP_GROUP=$(stat -c %G /app)
+
+if [[ -n "$APP_USER" ]] && [[ -n "$APP_GROUP" ]]; then
+  if [[ -f "$HOME/volumes_$APP" ]]; then
+    chown -R "${APP_USER}:${APP_GROUP}" $HOME/volumes_$APP
+    chmod -R g+rw $HOME/volumes_$APP
+  fi
+fi
+
+EOF
+
+    echo "-----> Injecting Volume start script ..."
+
+    id=$(echo "$runner" | docker run -i -a stdin $IMAGE /bin/bash -c "cat > /start")
+    test $(docker wait $id) -eq 0
+    docker commit $id $IMAGE > /dev/null
 
     ;;
 
