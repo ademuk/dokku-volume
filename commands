@@ -130,6 +130,14 @@ case "$1" in
     ;;
 
   volume:pre_build)
+
+    file_content=$(cat "$HOME/volumes_$APP")
+    volumes=""
+
+    for LINE in $file_content; do
+      IFS=':' read -r path container_path <<< "$LINE"
+      volumes="$volumes $container_path"
+
     read -d '' runner <<'EOF'
 #!/bin/bash
 
@@ -140,8 +148,8 @@ APP_GROUP=$(stat -c %G /app)
 
 if [[ -n "$APP_USER" ]] && [[ -n "$APP_GROUP" ]]; then
   if [[ -f "$HOME/volumes_$APP" ]]; then
-    chown -R "${APP_USER}:${APP_GROUP}" $HOME/volumes_$APP
-    chmod -R g+rw $HOME/volumes_$APP
+    chown -R "${APP_USER}:${APP_GROUP}" $volumes
+    chmod -R g+rw $volumes
   fi
 fi
 
