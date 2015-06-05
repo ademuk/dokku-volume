@@ -137,7 +137,7 @@ case "$1" in
     for LINE in $file_content; do
       IFS=':' read -r path container_path <<< "$LINE"
       volumes="$volumes $container_path"
-
+    done
     read -d '' runner <<'EOF'
 #!/bin/bash
 
