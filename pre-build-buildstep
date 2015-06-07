@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 
-dokku volume:pre_build $1
+dokku volume:pre_build_buildstep $1

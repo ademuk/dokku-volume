@@ -130,6 +130,10 @@ case "$1" in
     ;;
 
   volume:pre_build)
+    :
+    ;;
+
+  volume:pre_build_buildstep)
 
     file_content=$(cat "$HOME/volumes_$APP")
     volumes=""
@@ -159,7 +163,7 @@ EOF
 
     id=$(echo "$runner" | docker run -i -a stdin $IMAGE /bin/bash -c "cat > /start")
     test $(docker wait $id) -eq 0
-    docker commit $id $IMAGE > /dev/null
+    #docker commit $id $IMAGE > /dev/null
 
     ;;
 
