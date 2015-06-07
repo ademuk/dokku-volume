@@ -133,7 +133,7 @@ case "$1" in
     :
     ;;
 
-  volume:pre_build_buildstep)
+  volume:post_build_buildstep)
 
     file_content=$(cat "$HOME/volumes_$APP")
     volumes=""
